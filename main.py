@@ -1,2 +1,1 @@
-#hi
-print("we will win")
+print("Hi there! What's up?")
