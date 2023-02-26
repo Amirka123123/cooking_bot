@@ -20,7 +20,7 @@ def main_menu(): #первоначальная клавиатура
 
 @bot.message_handler(func=lambda message: message.text == "/start")
 def welcome(message):
-    reply = "Hi there! This bot will help you to find the ingredients for foreign meals."
+    reply = "Hi there! This bot will help you to find the ingredients for foreign meals!"
     bot.reply_to(message, reply, reply_markup=main_menu())
 
 
