@@ -18,10 +18,31 @@ def main_menu(): #первоначальная клавиатура
     return keyboard
 
 
+def kitchen_menu_keyboard(): # keyboards with several kitchen meals
+    japan_kitchen = KeyboardButton("Japanese Food🍱")
+    european_kitchen = KeyboardButton("European Food🍟")
+    korean_kitchen = KeyboardButton("Korean Food🍘")
+    italian_kitchen = KeyboardButton("Italian Food🧀")
+
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(japan_kitchen)
+    keyboard.add(european_kitchen)
+    keyboard.add(korean_kitchen)
+    keyboard.add(italian_kitchen)
+
+    return keyboard
+
+
 @bot.message_handler(func=lambda message: message.text == "/start")
 def welcome(message):
     reply = "Hi there! This bot will help you to find the ingredients for foreign meals!"
     bot.reply_to(message, reply, reply_markup=main_menu())
+
+
+@bot.message_handler(func=lambda message: message.text == "Foreign kitchens🍜")
+def send_message_after_main_menu(message):
+    reply = "Let's choose something!✨"
+    bot.reply_to(message, reply, reply_markup=kitchen_menu_keyboard())
 
 
 bot.infinity_polling()
