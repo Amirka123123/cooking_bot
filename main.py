@@ -3,6 +3,9 @@ import sqlite3
 from telebot import TeleBot
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup
 
+from constants import get_kitchen_query_japan
+from utils import buttons_for_keyboard_japanese_kitchen
+
 TOKEN = "6290184537:AAHsxexwzfKz95Y_vSd51KHGIuwE9zlRVoU"
 
 bot = TeleBot(TOKEN, parse_mode="MARKDOWN")
@@ -31,6 +34,29 @@ def kitchen_menu_keyboard(): # keyboards with several kitchen meals
     keyboard.add(italian_kitchen)
 
     return keyboard
+
+
+def get_kitchen_product() -> list:
+    kitchens = []
+
+    try:
+        conn = sqlite3.connect("kitchendatabasebot.db`")
+        cursor = conn.cursor()
+        sql = get_kitchen_query_japan()
+        cursor.execute(sql)
+
+        for Japanese_food in cursor.fetchall():
+            kitchens.append(Japanese_food[0])
+
+    except Exception as e:
+        print(e)
+
+    return kitchens
+
+
+@bot.message_handler(func=lambda message: message.text in buttons_for_keyboard_japanese_kitchen)
+def keyboard_with_japan_food():
+
 
 
 @bot.message_handler(func=lambda message: message.text == "/start")
