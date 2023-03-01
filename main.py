@@ -4,11 +4,12 @@ from telebot import TeleBot
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup
 
 from constants import get_kitchen_query_japan
-from utils import buttons_for_keyboard_japanese_kitchen
+from utils import buttons_for_keyboard_japanese_kitchen, ingredients_for_foods, check_name_food
 
 TOKEN = "6290184537:AAHsxexwzfKz95Y_vSd51KHGIuwE9zlRVoU"
 
 bot = TeleBot(TOKEN, parse_mode="MARKDOWN")
+
 
 def main_menu(): #первоначальная клавиатура
     search_button = KeyboardButton("Search🔎")
@@ -36,6 +37,17 @@ def kitchen_menu_keyboard(): # keyboards with several kitchen meals
     return keyboard
 
 
+def keyboard_with_japan_food():
+    data = buttons_for_keyboard_japanese_kitchen()
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    for datum in data:
+        print(datum)
+        button1 = KeyboardButton(datum[1])
+        keyboard.add(button1)
+
+    return keyboard
+
+
 def get_kitchen_product() -> list:
     kitchens = []
 
@@ -54,9 +66,19 @@ def get_kitchen_product() -> list:
     return kitchens
 
 
-@bot.message_handler(func=lambda message: message.text in buttons_for_keyboard_japanese_kitchen)
-def keyboard_with_japan_food():
+@bot.message_handler(func=lambda message: message.text == "Japanese Food🍱")
+def japan_food(message):
+    reply = "Choose your food:"
+    bot.reply_to(message, reply, reply_markup=keyboard_with_japan_food())
 
+
+@bot.message_handler(func=lambda message: message.text in check_name_food())
+def ingredients_for_sushi(message):
+    ingr, descr = ingredients_for_foods(message.text)
+    description = f"""*Description:* {descr}\n \n*Ingredients:* {ingr}"""
+    photo = open('photos/download.jpeg', 'rb')
+    print(photo)
+    bot.send_photo(message.chat.id, photo, caption=description, parse_mode='MARKDOWN')
 
 
 @bot.message_handler(func=lambda message: message.text == "/start")
