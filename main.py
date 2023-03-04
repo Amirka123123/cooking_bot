@@ -4,7 +4,8 @@ from telebot import TeleBot
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup
 
 from constants import get_kitchen_query_japan
-from utils import buttons_for_keyboard_japanese_kitchen, ingredients_for_foods, check_name_food, extract_picture
+from utils import buttons_for_keyboard_japanese_kitchen, ingredients_for_foods, check_name_food, extract_picture, \
+    buttons_for_keyboard_european_kitchen
 
 TOKEN = "6290184537:AAHsxexwzfKz95Y_vSd51KHGIuwE9zlRVoU"
 
@@ -41,7 +42,16 @@ def keyboard_with_japan_food():
     data = buttons_for_keyboard_japanese_kitchen()
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     for datum in data:
-        print(datum)
+        button1 = KeyboardButton(datum[1])
+        keyboard.add(button1)
+
+    return keyboard
+
+
+def keyboard_with_european_food():
+    data = buttons_for_keyboard_european_kitchen()
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    for datum in data:
         button1 = KeyboardButton(datum[1])
         keyboard.add(button1)
 
@@ -66,10 +76,25 @@ def get_kitchen_product() -> list:
     return kitchens
 
 
+@bot.message_handler(func=lambda message: message.text == "European Food🍟")
+def european_food(message):
+    reply = "Choose your food:"
+    bot.reply_to(message, reply, reply_markup=keyboard_with_european_food())
+
+
 @bot.message_handler(func=lambda message: message.text == "Japanese Food🍱")
 def japan_food(message):
     reply = "Choose your food:"
     bot.reply_to(message, reply, reply_markup=keyboard_with_japan_food())
+
+
+@bot.message_handler(func=lambda message: message.text in check_name_food())
+def ingredients_for_european_food(message):
+    ingredients, description1, city = ingredients_for_foods(message.text)
+    description = f"""*City:* {city}\n\n*Desciption:* {description1}\n\n*Ingredients:* {ingredients}"""
+    photo = extract_picture(message.text)
+    file = open("temp.jpg", "wb")
+    file.write(photo[0])
 
 
 @bot.message_handler(func=lambda message: message.text in check_name_food())
