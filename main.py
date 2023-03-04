@@ -4,7 +4,7 @@ from telebot import TeleBot
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup
 
 from constants import get_kitchen_query_japan
-from utils import buttons_for_keyboard_japanese_kitchen, ingredients_for_foods, check_name_food
+from utils import buttons_for_keyboard_japanese_kitchen, ingredients_for_foods, check_name_food, extract_picture
 
 TOKEN = "6290184537:AAHsxexwzfKz95Y_vSd51KHGIuwE9zlRVoU"
 
@@ -76,9 +76,12 @@ def japan_food(message):
 def ingredients_for_sushi(message):
     ingr, descr = ingredients_for_foods(message.text)
     description = f"""*Description:* {descr}\n \n*Ingredients:* {ingr}"""
-    photo = open('photos/download.jpeg', 'rb')
-    print(photo)
-    bot.send_photo(message.chat.id, photo, caption=description, parse_mode='MARKDOWN')
+    photo = extract_picture(message.text)
+    file = open("temp.jpg", "wb")
+    file.write(photo[0])
+    file.close()
+    file = open("temp.jpg", "rb")
+    bot.send_photo(message.chat.id, file, caption=description, parse_mode='MARKDOWN')
 
 
 @bot.message_handler(func=lambda message: message.text == "/start")

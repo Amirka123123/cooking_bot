@@ -16,3 +16,11 @@ def sql_ingredients(name_food):
 def check_name_food_sql():
     sql = f"SELECT name_food FROM Japanese_food"
     return sql
+
+
+def sql_insert_photo():
+    sql = '''UPDATE Japanese_food
+        SET PICTURE = ?
+        WHERE name_food = ?;'''
+
+    return sql
